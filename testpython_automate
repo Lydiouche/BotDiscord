@@ -1,0 +1,36 @@
+def saisie_automate ():
+	print(“Saisie de l’automate”)
+#Etats
+Q =input(“Entrez les états séparés par des espaces :”).split()
+#Langage
+L =input(“Entrez l’alphabet séparé par des espaces :”).split()
+
+#etat initial
+while True:
+I = input("État initial : ").strip()
+ if I in Q: 
+break 
+print("Erreur :” +I “n'est pas dans “+Q)
+
+#Etats terminaux
+while True: 
+T_entree = input("États terminaux : ").split() 
+T = [t for t in T_entree if t in Q] 
+if len(T) == len(T_entree): 
+break 
+print("Certains états ne font pas partie de Q. Réessayez.")
+
+#Tableau de transition
+print(“Saisie transitions:”)
+d = {q: {} for q in Q}
+for q in Q:
+	for a in L:
+		while True:
+			destination = input (" δ(" + q + ", " + a + ") = ").strip()
+			if dest == "" or dest in Q: 
+if dest: d[q][a] = dest 
+break 
+			print(“Erreur de saisie état ignoré car absent de Q.”)
+automate = {“Q”: Q, “I”: I, “T”:T, “L”:L, “d”: d}
+
+return automate

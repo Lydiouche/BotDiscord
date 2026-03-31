@@ -1,36 +1,132 @@
-def saisie_automate ():
-	print(“Saisie de l’automate”)
-#Etats
-Q =input(“Entrez les états séparés par des espaces :”).split()
-#Langage
-L =input(“Entrez l’alphabet séparé par des espaces :”).split()
+def saisie_automate():
+    print("Saisie de l'automate")
 
-#etat initial
-while True:
-I = input("État initial : ").strip()
- if I in Q: 
-break 
-print("Erreur :” +I “n'est pas dans “+Q)
 
-#Etats terminaux
-while True: 
-T_entree = input("États terminaux : ").split() 
-T = [t for t in T_entree if t in Q] 
-if len(T) == len(T_entree): 
-break 
-print("Certains états ne font pas partie de Q. Réessayez.")
+    # États
+    Q = input("Entrez les états séparés par des espaces :").split()
 
-#Tableau de transition
-print(“Saisie transitions:”)
-d = {q: {} for q in Q}
-for q in Q:
-	for a in L:
-		while True:
-			destination = input (" δ(" + q + ", " + a + ") = ").strip()
-			if dest == "" or dest in Q: 
-if dest: d[q][a] = dest 
-break 
-			print(“Erreur de saisie état ignoré car absent de Q.”)
-automate = {“Q”: Q, “I”: I, “T”:T, “L”:L, “d”: d}
 
-return automate
+    # Langage
+    L = input("Entrez l'alphabet séparé par des espaces :").split()
+
+
+    # État initial
+    while True:
+        I = input("État initial : ").strip()
+        if I in Q:
+            break
+        print("Erreur : " + I + " n'est pas dans " + str(Q))
+
+
+    # États terminaux
+    while True:
+        T_entree = input("États terminaux : ").split()
+        T = [t for t in T_entree if t in Q]
+        if len(T) == len(T_entree):
+            break
+        print("Certains états ne font pas partie de Q. Réessayez.")
+
+
+    # Tableau de transition
+    print("Saisie transitions:")
+    d = {q: {} for q in Q}
+    for q in Q:
+        for a in L:
+            while True:
+                destination = input(" δ(" + q + ", " + a + ") = ").strip()
+                if destination == "" or destination in Q:  
+                    if destination:
+                        d[q][a] = destination
+                    break
+                print("Erreur de saisie, état ignoré car absent de Q.")  
+
+
+    automate = {"Q": Q, "I": I, "T": T, "L": L, "d": d}  
+
+
+    return automate  
+
+
+
+
+saisie_automate()
+
+
+def afficher_automate(automate, titre="AUTOMATE"):
+   Q, I, T, L, d = automate["Q"], automate["I"], automate["T"], automate["L"], automate["d"]
+   print(f"\n{'─'*45}")
+   print(f"  {titre}")
+   print(f"{'─'*45}")
+   print(f"  États (Q)       : {Q}")
+   print(f"  État initial    : {I}")
+   print(f"  États terminaux : {T}")
+   print(f"  Alphabet (Σ)    : {L}")
+   print(f"\n  Table de transition :")
+ 
+   # En-tête
+   col = max(len(q) for q in Q) + 2
+   header = "  " + "État".ljust(col) + "".join(a.center(col) for a in L)
+   print(header)
+   print("  " + "─" * len(header))
+ 
+   for q in Q:
+       marker = " →" if q == I else "  "
+       marker += " *" if q in T else "  "
+       row = marker + " " + q.ljust(col - 4)
+       for a in L:
+           row += d[q].get(a, "—").center(col)
+       print(row)
+   print(f"{'─'*45}")
+
+
+
+
+def rendre_complet(automate):
+    Q = automate["Q"]
+    I = automate["I"]
+    T = automate["T"]
+    L = automate["L"]
+    d = automate["d"]
+
+
+    # Vérifier si l'automate est déjà complet
+    est_complet = True
+    for q in Q:
+        for a in L:
+            if a not in d[q]:
+                est_complet = False
+                break
+
+
+    if est_complet:
+        print("L'automate est déjà complet, aucune modification.")
+        return automate
+
+
+    # Créer l'état puits
+    puits = "puits"
+    while puits in Q:       # au cas où "puits" est déjà un état
+        puits += "_"
+
+
+    # Ajouter l'état puits à Q et à d
+    Q = Q + [puits]
+    d[puits] = {}
+
+
+    # Remplir les transitions manquantes vers le puits
+    for q in Q:
+        for a in L:
+            if a not in d[q]:
+                d[q][a] = puits
+
+
+    print("Automate complété, état puits ajouté : " + puits)
+    automate_complet = {"Q": Q, "I": I, "T": T, "L": L, "d": d}
+    return automate_complet
+
+
+automate=saisie_automate()
+afficher_automate(automate, titre="AUTOMATE")
+automate_complet=rendre_complet(automate)
+afficher_automate(automate_complet, titre="AUTOMATE complet")
